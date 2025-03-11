@@ -1,8 +1,7 @@
 <template>
-    <header>
-        header
-    </header>
 
+    <NavBar/>
+    
     <main class="font-archivo">
         <slot name="content" />
     </main>
@@ -12,3 +11,7 @@
     </footer>
 
 </template>
+
+<script setup>
+import NavBar from '@/components/navigation/NavBar.vue';
+</script>
