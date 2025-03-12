@@ -12,6 +12,11 @@
 
     --color-orioles-orange: #F94A13;
     --color-orioles-linen: #F8F4E9;
+    --color-dark-charcoal : #333333;
+    --color-lavender : #E6E6FA;
+    --color-silver : #B1B2B5;
+    --color-ptr-blue: #24387D;
+    --color-red-linen: #B02E0C;
 
 
     --animate-marquee: marquee 25s linear infinite;
@@ -35,5 +40,11 @@
         100% {
             transform: translateX(0%)
         }
+    }
+}
+
+@layer utilities{
+    .hide-scrollbar{
+        scrollbar-width: none;
     }
 }
