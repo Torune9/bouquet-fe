@@ -1,11 +1,11 @@
 <template>
-    <header class="sticky top-0">
-        <div class="navbar bg-base-100 shadow-sm">
+    <header class="sticky -top-1 z-50 glass">
+        <div class="navbar shadow-sm">
             <div class="flex-1">
-                <a class="btn btn-ghost text-xl">Snf Bouquet</a>
+                <a class="btn btn-ghost text-xl font-light">SnfBouquet</a>
             </div>
             <div class="flex gap-x-4">
-                <RouterLink class="flex items-center">
+                <RouterLink class="flex items-center" to="/">
                     <button class="btn btn-circle btn-ghost">
                         <font-awesome-icon icon="fa-solid fa-house-chimney" size="lg" />
                     </button>
@@ -46,5 +46,5 @@
 </template>
 
 <script setup>
-import CartComponent from '../product/CartComponent.vue';
+import CartComponent from '@/components/landingpage/CartComponent.vue';
 </script>
