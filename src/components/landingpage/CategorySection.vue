@@ -1,12 +1,11 @@
 <template>
     <div>
         <h1 class="p-2 text-xl">Categories</h1>
-        <div class="w-full flex flex-row overflow-y-auto gap-x-2 p-2">
-            <div v-for="category in categories">
-                <button class="btn btn-circle btn-ghost w-14 h-14 bg-orioles-orange text-orioles-linen border hover:bg-orange-500" type="button">
+        <div class="w-full flex flex-row overflow-x-auto gap-x-2 p-2 hide-scrollbar">
+            <div v-for="category in categories" class="tooltip tooltip-right" :data-tip="category.name">
+                <button class="btn btn-circle btn-ghost w-12 h-12 bg-orioles-orange  text-orioles-linen border hover:bg-orange-500 tooltip tooltip-right" type="button">
                     <font-awesome-icon :icon="category.icon" size="lg"/>
                 </button>
-                <p></p>
             </div>
         </div>
     </div>
