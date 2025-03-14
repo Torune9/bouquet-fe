@@ -1,6 +1,6 @@
 <template>
-    <header class="sticky -top-1 z-50 glass">
-        <div class="navbar shadow-sm">
+    <header class="sticky inset-0 z-50 glass">
+        <div class="navbar">
             <div class="flex-1">
                 <a class="btn btn-ghost text-xl font-light">SnfBouquet</a>
             </div>
@@ -10,18 +10,18 @@
                         <font-awesome-icon icon="fa-solid fa-house-chimney" size="lg" />
                     </button>
                 </RouterLink>
-                <div class="dropdown dropdown-end">
-                    <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
-                        <div class="indicator">
-                            <font-awesome-icon icon="fa-solid fa-cart-shopping" size="lg" />
-                            <span class="badge badge-sm indicator-item">8</span>
-                        </div>
-                    </div>
-                    <div tabindex="0" class="dropdown-content">
-                        <CartComponent />
+                <div tabindex="0" role="button" class="btn btn-ghost btn-circle" @click="showCart">
+                    <div class="indicator">
+                        <font-awesome-icon icon="fa-solid fa-cart-shopping" size="lg" />
+                        <span class="badge badge-sm indicator-item badge-warning">{{ cart.length }}</span>
                     </div>
                 </div>
-                <div class="dropdown dropdown-end">
+                <RouterLink class="flex items-center" to="/sign-in">
+                    <button class="btn btn-md">
+                       Login
+                    </button>
+                </RouterLink>
+                <div class="dropdown dropdown-end" v-if="isLogin">
                     <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
                         <div class="w-10 rounded-full">
                             <img alt="Tailwind CSS Navbar component"
@@ -36,7 +36,7 @@
                                 <span class="badge">New</span>
                             </a>
                         </li>
-                        <li><a>Settings</a></li>
+                        <li><a>History</a></li>
                         <li><a>Logout</a></li>
                     </ul>
                 </div>
@@ -46,5 +46,17 @@
 </template>
 
 <script setup>
-import CartComponent from '@/components/landingpage/CartComponent.vue';
+import { useOrderStore } from '@/stores/orderStore'
+import { storeToRefs } from 'pinia'
+
+
+const emits = defineEmits(['showCart'])
+
+const showCart = ()=>{
+    emits('showCart')
+}
+
+const orderStore = useOrderStore()
+const {cart} = storeToRefs(orderStore)
+
 </script>
