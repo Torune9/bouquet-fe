@@ -6,14 +6,14 @@
             }
         }">
             <div
-                class="flex flex-col w-44 shadow-md relative cursor-pointer hover:bg-silver/10 hover:scale-95 transition duration-300">
-                <div class="h-36">
+                class="flex flex-col w-44 shadow-md relative cursor-pointer hover:bg-silver/10 hover:scale-95 transition duration-300 md:w-52 lg:w-56">
+                <div class="h-36 md:h-40 lg:h-48">
                     <img :src="img" alt="product-image" class="w-full h-full object-cover">
                 </div>
                 <div class="p-2">
                     <h1 class="text-sm">
 
-                        {{ name.length > 20 ? `${name}...` : name }}
+                        {{ name.length > 20 ? `${name.slice(0,18)}...` : name }}
                     </h1>
                     <h2 class="text-lg font-semibold mt-1">{{ idrFormatter(price) }}</h2>
                 </div>
