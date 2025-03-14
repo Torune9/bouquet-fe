@@ -1,4 +1,5 @@
 <template>
+    <MarqueeComponent class="bg-orioles-orange text-orioles-linen mt-4"/>
     <footer class="footer sm:footer-horizontal bg-neutral text-neutral-content p-10">
         <aside>
             <p class="text-7xl">
@@ -41,3 +42,7 @@
         </nav>
     </footer>
 </template>
+
+<script setup>
+import MarqueeComponent from '../info/MarqueeComponent.vue';
+</script>
