@@ -13,12 +13,19 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { far } from '@fortawesome/free-regular-svg-icons'
 
+import Vue3Toastify from 'vue3-toastify';
+
+import 'vue3-toastify/dist/index.css';
 
 library.add(fas,fab,far)
 
 
 const app = createApp(App)
 
+app.use(Vue3Toastify,{
+    autoClose: 1000,
+    theme : "auto" 
+})
 app.component('font-awesome-icon', FontAwesomeIcon)
 
 app.use(pinia)
