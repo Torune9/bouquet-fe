@@ -1,6 +1,6 @@
 <template>
     <section
-        class="text-orioles-linen w-screen h-20 flex flex-row justify-center items-center bg-neutral uppercase overflow-hidden relative">
+        class="text-orioles-linen w-full h-20 flex flex-row justify-center items-center bg-neutral uppercase overflow-hidden relative">
         <div class="py-12 animate-marquee whitespace-nowrap">
             <span class="text-4xl mx-4">
                 amazing flower crafts
