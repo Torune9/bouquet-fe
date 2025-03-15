@@ -4,7 +4,7 @@
         <h2>Page Not Found</h2>
         <p>Oops looks like the page doesn't exist</p>
         <button>
-            <RouterLink to="/" class="btn">
+            <RouterLink to="/bouquet" class="btn">
                 Home
             </RouterLink>
         </button>
