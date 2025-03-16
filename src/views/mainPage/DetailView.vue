@@ -51,6 +51,15 @@
                             </button>
                         </div>
 
+                        <div class="flex gap-x-2">
+                            <button @click="increment" class="btn btn-xs">
+                                <font-awesome-icon icon="fa-solid fa-plus" />
+                            </button>
+                            <input type="text" v-model="quantity" class=" field-sizing-content text-center min-w-10">
+                            <button @click="decrement" class="btn btn-xs">
+                                <font-awesome-icon icon="fa-solid fa-minus" />
+                            </button>
+                        </div>
                         <div class="flex flex-row justify-between items-center">
                             <p class="border px-4 rounded-md">
                                 Category
@@ -60,15 +69,6 @@
                                 <span
                                     class="border w-20 text-center rounded-md text-orioles-orange inline-block">Hot</span>
                             </span>
-                        </div>
-                        <div class="flex gap-x-2">
-                            <button @click="increment" class="btn btn-xs">
-                                <font-awesome-icon icon="fa-solid fa-plus" />
-                            </button>
-                            <input type="text" v-model="quantity" class=" field-sizing-content text-center min-w-10">
-                            <button @click="decrement" class="btn btn-xs">
-                                <font-awesome-icon icon="fa-solid fa-minus" />
-                            </button>
                         </div>
 
                     </div>
