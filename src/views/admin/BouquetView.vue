@@ -1,0 +1,3 @@
+<template>
+    Bouquet
+</template>
