@@ -1,10 +1,10 @@
 <template>
     <Transition name="slide-fade">
         <div v-if="isShowCart"
-            class="fixed bg-black/30 w-full h-[90dvh] max-sm:h-[90vh] flex-col flex z-30 box-border items-end overflow-y-auto font-archivo hide-scrollbar">
-            <div class="bg-white shadow-xl w-full flex flex-col gap-2 p-2 lg:w-2/5 sm:w-2/4 min-h-full"
+        class="fixed bg-black/30 w-full h-[90dvh] max-sm:h-[90vh] flex-col flex z-30 box-border items-end overflow-y-auto font-archivo hide-scrollbar">
+        <h1 class="sticky top-0 w-full lg:w-2/5 sm:w-2/4 bg-orioles-orange p-4 text-xl text-orioles-linen">Your Cart</h1>
+            <div class="bg-white shadow-xl w-full flex flex-col gap-2 p-2 lg:w-2/5 sm:w-2/4 h-full overflow-y-auto hide-scrollbar"
                 v-if="cart.length > 0">
-                <h1 class="text-2xl">Your Cart</h1>
                 <div v-for="(product, i) in cart" :key="product.id"
                     class="flex flex-row w-full border-b p-2 hover:bg-lavender/20 cursor-pointer gap-x-2 relative z-0">
                     <!-- btn select product -->
@@ -36,7 +36,7 @@
                     </div>
                 </div>
             </div>
-            <div v-if="cart.length !== 0" class="sticky bottom-0 w-full lg:w-2/5 sm:w-2/4 bg-white p-4 border-t">
+            <div v-if="cart.length !== 0" class="sticky bottom-0 w-full lg:w-2/5 sm:w-2/4 bg-white p-4">
                 <p class="text-lg mb-2">
                     Total Price : {{ totalSelectedPrice }}
                 </p>
