@@ -12,9 +12,9 @@
 
     --color-orioles-orange: #F94A13;
     --color-orioles-linen: #F8F4E9;
-    --color-dark-charcoal : #333333;
-    --color-lavender : #E6E6FA;
-    --color-silver : #B1B2B5;
+    --color-dark-charcoal: #333333;
+    --color-lavender: #E6E6FA;
+    --color-silver: #B1B2B5;
     --color-ptr-blue: #24387D;
     --color-red-linen: #B02E0C;
 
@@ -43,8 +43,19 @@
     }
 }
 
-@layer utilities{
-    .hide-scrollbar{
+@layer utilities {
+    .hide-scrollbar {
         scrollbar-width: none;
+    }
+
+    .customize-table {
+        --easy-table-header-background-color: transparent;
+        --easy-table-body-row-background-color: #fff;
+        --easy-table-footer-background-color: transparent;
+        border-radius: 10px;
+
+        --easy-table-header-height: 48px;
+        --easy-table-body-row-height: 48px;
+        --easy-table-border: none;
     }
 }
