@@ -1,19 +1,11 @@
+<script setup lang="ts">
+import BtnSearch from '@/components/admin/BtnSearch.vue';
+
+</script>
+
 <template>
     <div class="flex flex-col gap-y-2">
-        <section>
-            <div class="inline-flex border w-full justify-between">
-                <div class="sm:w-full">
-                    <label class="input sm:min-w-3/4">
-                        <span><font-awesome-icon icon="fa-solid fa-magnifying-glass" /></span>
-                        <input type="search" class="grow" placeholder="Search" />
-                    </label>
-                </div>
-
-                <button class="btn btn-primary w-24">
-                    Add
-                </button>
-            </div>
-        </section>
+       <BtnSearch/>
         <section>
             <h1>Filter</h1>
             <form class="filter">
