@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex">
+  <div class="min-h-screen bg-gray-100 flex font-archivo">
     <!-- Sidebar (Hidden on Mobile) -->
     <aside :class="{ '-translate-x-full': !isSidebarOpen }"
       class="w-64 bg-white shadow-lg fixed h-full transform transition-transform duration-300 ease-in-out lg:translate-x-0 z-30">
