@@ -1,8 +1,8 @@
 <template>
     <Transition name="slide-fade">
         <div v-if="isShowCart"
-            class="fixed bg-black/30 w-full h-[100vh] max-sm:h-[90vh] flex-col flex z-30 box-border items-end">
-            <div class="bg-white shadow-xl w-full h-full flex flex-col overflow-y-auto scroll-smooth gap-2 p-2 hide-scrollbar lg:w-2/5 sm:w-2/4"
+            class="fixed bg-black/30 w-full h-[90dvh] max-sm:h-[90vh] flex-col flex z-30 box-border items-end overflow-y-auto font-archivo hide-scrollbar">
+            <div class="bg-white shadow-xl w-full flex flex-col gap-2 p-2 lg:w-2/5 sm:w-2/4 min-h-full"
                 v-if="cart.length > 0">
                 <h1 class="text-2xl">Your Cart</h1>
                 <div v-for="(product, i) in cart" :key="product.id"
@@ -35,9 +35,12 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="cart.length !== 0">
-                    <button class="btn btn-md btn-neutral w-full">Checkout</button>
-                </div>
+            </div>
+            <div v-if="cart.length !== 0" class="sticky bottom-0 w-full lg:w-2/5 sm:w-2/4 bg-white p-4 border-t">
+                <p class="text-lg mb-2">
+                    Total Price : {{ totalSelectedPrice }}
+                </p>
+                <button class="btn btn-md btn-neutral w-full">Checkout</button>
             </div>
             <div class="bg-white shadow-xl w-full h-full flex flex-col overflow-y-auto scroll-smooth gap-2 p-2 hide-scrollbar lg:w-2/5 sm:w-2/4 items-center justify-center"
                 v-else>
@@ -53,7 +56,7 @@
 <script setup>
 import { useOrderStore } from '@/stores/orderStore';
 import { storeToRefs } from 'pinia';
-import { ref, watch } from 'vue';
+import { ref, computed} from 'vue';
 
 const props = defineProps({
     isShowCart: {
@@ -82,13 +85,8 @@ const removeFromCart = (index) => {
 
 const checkoutItems = ref([])
 
-const sliceName = (name) => {
-    if (name.length > 15) {
-        return `${name.slice(0, 15)}....`
-    } else {
-        return name
-    }
-}
+
+const sliceName = (name) => name.length > 15 ? `${name.slice(0, 15)}....` : name
 
 const selectedItem = (product) => {
     if (product.selected) {
@@ -99,8 +97,8 @@ const selectedItem = (product) => {
     }
 }
 
-watch(() => checkoutItems.value, () => console.log(checkoutItems.value), {
-    deep: true
+const totalSelectedPrice = computed(() => {
+    return checkoutItems.value.reduce((total, item) => total + (item.price * item.quantity), 0)
 })
 
 </script>
