@@ -2,6 +2,7 @@ import AdminLayout from "@/layouts/AdminLayout.vue";
 import BouquetView from "@/views/admin/BouquetView.vue";
 import CategoryView from "@/views/admin/CategoryView.vue";
 import DashboardView from "@/views/admin/DashboardView.vue";
+import DetailBoquetView from "@/views/admin/DetailBoquetView.vue";
 import OrderView from "@/views/admin/OrderView.vue";
 import RoleView from "@/views/admin/RoleView.vue";
 import UserListView from "@/views/admin/UserListView.vue";
@@ -27,6 +28,11 @@ export const adminRoutes = [
                 path : 'bouquet',
                 name : 'boqouets',
                 component : BouquetView
+            },
+            {
+                path : 'bouquet/:id',
+                name : 'boqouet-detail',
+                component : DetailBoquetView
             },
             {
                 path : 'order',
