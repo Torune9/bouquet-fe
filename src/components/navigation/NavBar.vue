@@ -16,12 +16,12 @@
                         <span class="badge badge-sm indicator-item badge-warning">{{ cart.length }}</span>
                     </div>
                 </div>
-                <RouterLink class="flex items-center" to="/sign-in">
+                <RouterLink class="flex items-center" to="/sign-in" v-if="!isAuthenticated">
                     <button class="btn btn-md">
-                       Login
+                        Login
                     </button>
                 </RouterLink>
-                <div class="dropdown dropdown-end">
+                <div class="dropdown dropdown-end" v-else>
                     <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
                         <div class="w-10 rounded-full">
                             <img alt="Tailwind CSS Navbar component"
@@ -40,7 +40,11 @@
                                 History
                             </RouterLink>
                         </li>
-                        <li><a>Logout</a></li>
+                        <li>
+                            <button @click="logout" type="button">
+                                Logout
+                            </button>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -49,17 +53,23 @@
 </template>
 
 <script setup>
+import { useAuthStore } from '@/stores/authStore'
 import { useOrderStore } from '@/stores/orderStore'
 import { storeToRefs } from 'pinia'
 
 
 const emits = defineEmits(['showCart'])
 
-const showCart = ()=>{
+const showCart = () => {
     emits('showCart')
 }
 
 const orderStore = useOrderStore()
-const {cart} = storeToRefs(orderStore)
+const { cart } = storeToRefs(orderStore)
+
+const authStore = useAuthStore()
+const { isAuthenticated } = storeToRefs(authStore)
+
+const logout = () => authStore.logout()
 
 </script>
