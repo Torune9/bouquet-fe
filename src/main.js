@@ -19,9 +19,7 @@ import 'vue3-toastify/dist/index.css';
 import Vue3EasyDataTable from 'vue3-easy-data-table';
 import 'vue3-easy-data-table/dist/style.css';
 
-
 library.add(fas,fab,far)
-
 
 const app = createApp(App)
 
