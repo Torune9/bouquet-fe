@@ -17,10 +17,12 @@
       </div>
     </section>
     <section class="flex flex-col items-center relative max-lg:h-96 z-0">
-      <div
-        class="bg-orioles-orange rounded-full flex justify-center items-center absolute bottom-0 h-80 w-80 lg:w-[450px] lg:h-[450px]">
-        <img :src="img" alt="landing-image">
-      </div>
+      <Transition name="entrance">
+        <div
+          class="bg-orioles-orange rounded-full flex justify-center items-center absolute bottom-0 h-80 w-80 lg:w-[450px] lg:h-[450px]" v-if="isEntrance">
+          <img :src="img" alt="landing-image">
+        </div>
+      </Transition>
     </section>
   </main>
 </template>
@@ -29,4 +31,23 @@
 <script setup>
 import img from '@/assets/img/image-landing.png'
 import MarqueeComponent from '@/components/info/MarqueeComponent.vue';
+import { onMounted, ref } from 'vue';
+const isEntrance = ref(false)
+onMounted(()=>isEntrance.value = !isEntrance.value)
 </script>
+
+<style scoped>
+.entrance-enter-active {
+  transition: all 0.6s cubic-bezier(0.39, 0.575, 0.565, 1.0);
+}
+
+.entrance-enter-from {
+  opacity: 0;
+  transform: translateY(50px);
+}
+
+.entrance-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
