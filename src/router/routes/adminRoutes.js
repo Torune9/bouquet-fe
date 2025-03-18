@@ -1,4 +1,5 @@
 import AdminLayout from "@/layouts/AdminLayout.vue";
+import AddBouquetView from "@/views/admin/AddBouquetView.vue";
 import BouquetView from "@/views/admin/BouquetView.vue";
 import CategoryView from "@/views/admin/CategoryView.vue";
 import DashboardView from "@/views/admin/DashboardView.vue";
@@ -28,6 +29,11 @@ export const adminRoutes = [
                 path : 'bouquet',
                 name : 'boqouets',
                 component : BouquetView
+            },
+            {
+                path: "bouquet/add",
+                name: "add-bouquet",
+                component: AddBouquetView,
             },
             {
                 path : 'bouquet/:id',
