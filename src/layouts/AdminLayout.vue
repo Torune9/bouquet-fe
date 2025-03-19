@@ -17,7 +17,7 @@
       </header>
 
       <!-- Dynamic Content -->
-      <main class="flex-1 overflow-y-auto p-2 md:p-6 bg-gray-100">
+      <main class="flex-1 overflow-y-auto p-2 sm:p-6 bg-gray-100">
         <router-view />
       </main>
     </div>
