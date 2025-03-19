@@ -5,6 +5,7 @@ import CategoryView from "@/views/admin/CategoryView.vue";
 import DashboardView from "@/views/admin/DashboardView.vue";
 import DetailBoquetView from "@/views/admin/DetailBoquetView.vue";
 import OrderView from "@/views/admin/OrderView.vue";
+import ProfileAdmin from "@/views/admin/ProfileAdmin.vue";
 import RoleView from "@/views/admin/RoleView.vue";
 import UserListView from "@/views/admin/UserListView.vue";
 
@@ -39,6 +40,11 @@ export const adminRoutes = [
                 path : 'bouquet/:id',
                 name : 'boqouet-detail',
                 component : DetailBoquetView
+            },
+            {
+                path: "profile",
+                name: "profile-admin",
+                component: ProfileAdmin,
             },
             {
                 path : 'order',
