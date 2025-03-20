@@ -22,5 +22,29 @@ export const useBouquetStore = defineStore('bouquet',{
                throw error
             }
         },
+        async getDetailBouquet (id){
+            try {
+                const response = await api.get(`/bouquet/${id}`)
+                return response.data
+            } catch (error) {
+               throw error
+            }
+        },
+        async updateBouquet (id,payload){
+            try {
+                const response = await api.put(`/bouquet/${id}`,payload)
+                return response.data
+            } catch (error) {
+               throw error
+            }
+        },
+        async deleteImageBouquet (id){
+            try {
+                const response = await api.delete(`/bouquet/image/${id}`)
+                return response.data
+            } catch (error) {
+               throw error
+            }
+        },
     }
 })
