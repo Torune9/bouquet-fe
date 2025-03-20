@@ -1,11 +1,11 @@
 import AdminLayout from "@/layouts/AdminLayout.vue";
-import AddBouquetView from "@/views/admin/AddBouquetView.vue";
-import BouquetView from "@/views/admin/BouquetView.vue";
-import CategoryView from "@/views/admin/CategoryView.vue";
+import AddBouquetView from "@/views/admin/bouquets/AddBouquetView.vue";
+import BouquetView from "@/views/admin/bouquets/BouquetView.vue";
+import CategoryView from "@/views/admin/categories/CategoryView.vue";
 import DashboardView from "@/views/admin/DashboardView.vue";
-import DetailBoquetView from "@/views/admin/DetailBoquetView.vue";
+import DetailBoquetView from "@/views/admin/bouquets/DetailBoquetView.vue";
 import OrderView from "@/views/admin/OrderView.vue";
-import ProfileAdmin from "@/views/admin/ProfileAdmin.vue";
+import ProfileAdmin from "@/views/admin/profiles/ProfileAdmin.vue";
 import RoleView from "@/views/admin/RoleView.vue";
 import UserListView from "@/views/admin/UserListView.vue";
 
