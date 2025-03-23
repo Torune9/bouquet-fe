@@ -1,4 +1,5 @@
 <template>
+    <LoadingOverlay :is-loading="isLoadingOverlay"/>
     <div class="flex flex-col gap-y-8">
         <!-- Tombol Back -->
         <section>
@@ -12,10 +13,10 @@
 
         <!-- Upload Gambar -->
         <section>
-            <div class="w-full h-full flex flex-col gap-y-4 md:px-20 lg:px-32">
+            <div class="flex flex-col h-full w-full gap-y-4 lg:px-32 md:px-20">
                 <!-- Input File -->
                 <label for="imageUpload"
-                    class="cursor-pointer border-2 flex flex-col justify-center items-center h-48 md:h-72 gap-y-4 text-slate-700 border-dashed rounded-md bg-white/50 hover:bg-black/5 transition-colors relative">
+                    class="flex flex-col bg-white/50 border-2 border-dashed h-48 justify-center rounded-md text-slate-700 cursor-pointer gap-y-4 hover:bg-black/5 items-center md:h-72 relative transition-colors">
                     <p class="text-3xl">
                         <font-awesome-icon icon="fa-solid fa-upload" />
                     </p>
@@ -25,16 +26,16 @@
 
                     <!-- Indikator Loading -->
                     <div v-if="isLoading"
-                        class="absolute inset-0 flex justify-center items-center bg-white/80 rounded-md">
+                        class="flex bg-white/80 justify-center rounded-md absolute inset-0 items-center">
                         <span class="loading loading-spinner loading-xs"></span>
                         <p class="text-blue-600 text-sm">Processing images...</p>
                     </div>
 
                     <!-- Preview Gambar Utama -->
-                    <div class="w-full h-full md:w-full bg-white absolute inset-0 rounded-md shadow-md"
+                    <div class="bg-white h-full rounded-md shadow-md w-full absolute inset-0 md:w-full"
                         v-if="mainImage">
-                        <img :src="mainImage" alt="upload image" class="w-full h-full object-contain">
-                        <button class="absolute -top-2 -right-2 btn btn-circle btn-xs btn-error" type="button"
+                        <img :src="mainImage" alt="upload image" class="h-full w-full object-contain">
+                        <button class="btn btn-circle btn-error btn-xs -right-2 -top-2 absolute" type="button"
                             @click="removeImage(0)">
                             <font-awesome-icon icon="fa-solid fa-xmark" />
                         </button>
@@ -44,11 +45,11 @@
 
 
                 <!-- Preview Thumbnail -->
-                <div class="inline-flex w-full gap-2 justify-between" v-if="thumbnails.length">
-                    <div class="w-20 h-20 sm:h-28 sm:w-28  md:h-32 md:w-32 bg-white rounded-md shadow-md relative"
+                <div class="justify-between w-full gap-2 inline-flex" v-if="thumbnails.length">
+                    <div class="bg-white h-20 rounded-md shadow-md w-20 md:h-32 md:w-32 relative sm:h-28 sm:w-28"
                         v-for="(img, index) in thumbnails" :key="index">
-                        <img :src="img" alt="image-product" class="w-full h-full object-cover rounded-md">
-                        <button class="absolute -top-2 -right-2 btn btn-circle btn-xs btn-error" type="button"
+                        <img :src="img" alt="image-product" class="h-full rounded-md w-full object-cover">
+                        <button class="btn btn-circle btn-error btn-xs -right-2 -top-2 absolute" type="button"
                             @click="removeImage(index + 1)">
                             <font-awesome-icon icon="fa-solid fa-xmark" />
                         </button>
@@ -58,7 +59,7 @@
         </section>
 
         <section>
-            <form @submit.prevent="addBouquet" class="flex flex-col gap-y-3 md:px-20 lg:px-32">
+            <form @submit.prevent="addBouquet" class="flex flex-col gap-y-3 lg:px-32 md:px-20">
                 <div>
                     <label for="name">Bouquet name</label>
                     <input type="text" id="name" name="name" class="input w-full" v-model="payload.name">
@@ -81,7 +82,7 @@
                 </div>
                 <div>
                     <label for="category">Category</label>
-                    <select class="select w-full" id="category" v-model="payload.category">
+                    <select class="w-full select" id="category" v-model="payload.category">
                         <option disabled value="">Please select one</option>
                         <option v-for="category in categories" :value="category.id">
                             {{ category.name }}
@@ -92,7 +93,7 @@
                 </div>
                 <div>
                     <label for="description" class="block">Description</label>
-                    <textarea class="textarea w-full h-48" placeholder="Bio" id="description"
+                    <textarea class="h-48 w-full textarea" placeholder="Bio" id="description"
                         name="description"></textarea>
                 </div>
                 <button class="btn btn-success">Add</button>
@@ -109,6 +110,7 @@ import { required, integer } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
 import { useCategoryStore } from '@/stores/categoryStore';
 import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
 
 const bouquetStore = useBouquetStore()
 const categoryStore = useCategoryStore()
@@ -117,8 +119,10 @@ const router = useRouter()
 
 const sources = ref([]);
 const isLoading = ref(false)
+const isLoadingOverlay = ref(false)
 const category = ref('')
-const categories = ref([])
+const {categories} = storeToRefs(categoryStore)
+
 
 const payload = reactive({
     name: '',
@@ -188,8 +192,7 @@ const removeImage = (index) => {
 };
 
 const addBouquet = async () => {
-    console.log(payload.category);
-
+    isLoadingOverlay.value = !isLoadingOverlay.value
     const payloads = new FormData()
     try {
         payloads.append('name', payload.name)
@@ -198,13 +201,17 @@ const addBouquet = async () => {
         payloads.append('description', payload.description)
         payloads.append('categoryId', payload.category)
         if (payload.images) {
-            payloads.append('image', payload.images)
+            payload.images.forEach(file => {
+                payloads.append('image', file)
+            })
         }
         const isValidate = await v$.value.$validate()
 
         if (!isValidate) return
 
         const response = await bouquetStore.addBouquet(payloads)
+        console.log(response.data);
+        
         if (response) {
             return router.replace({
                 path: '/admin/bouquet',
@@ -227,22 +234,8 @@ const addBouquet = async () => {
         });
 
         sources.value = [];
+        isLoadingOverlay.value = !isLoadingOverlay.value
     }
 
 }
-
-const getCategory = async () => {
-    try {
-        const response = await categoryStore.getCategories()
-        categories.value = response.data
-        console.log(response);
-    } catch (error) {
-        console.log(error);
-
-    }
-}
-
-onMounted(async () => {
-    await getCategory()
-})
 </script>
