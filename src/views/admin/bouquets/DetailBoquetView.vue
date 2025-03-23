@@ -26,33 +26,33 @@
         </section>
         <!-- Upload Gambar -->
         <section>
-            <div class="w-full h-full flex flex-col gap-y-4 md:px-20 lg:px-32">
+            <div class="flex flex-col h-full w-full gap-y-4 lg:px-32 md:px-20">
                 <label for="imageUpload"
-                    class="cursor-pointer border-2 flex flex-col justify-center items-center h-48 md:h-72 gap-y-4 text-slate-700 border-dashed rounded-md bg-white/50 hover:bg-black/5 transition-colors relative">
+                    class="flex flex-col bg-white/50 border-2 border-dashed h-48 justify-center rounded-md text-slate-700 cursor-pointer gap-y-4 hover:bg-black/5 items-center md:h-72 relative transition-colors">
                     <p class="text-3xl"><font-awesome-icon icon="fa-solid fa-upload" /></p>
                     <p class="text-sm font-semibold">Upload Images</p>
                     <small>PNG, JPG, JPEG are Allowed</small>
                     <input type="file" class="hidden" id="imageUpload" multiple accept="image/png, image/jpeg"
                         @change="uploadImage">
-                    <div v-if="isUploading" class="absolute inset-0 bg-gray-100/50 flex justify-center items-center">
-                        <span class="loading loading-spinner text-primary"></span>
+                    <div v-if="isUploading" class="flex bg-gray-100/50 justify-center absolute inset-0 items-center">
+                        <span class="text-primary loading loading-spinner"></span>
                     </div>
                 </label>
                 <!-- Preview Gambar -->
-                <div class="flex flex-wrap gap-2 mt-4 justify-evenly max-sm:justify-normal">
-                    <div v-for="img in sources" :key="img.id || img.file?.name" class="relative indicator">
-                        <span class="indicator-item badge badge-ghost indicator-middle indicator-center" v-if="img.isNew">New</span>
+                <div class="flex flex-wrap justify-evenly gap-2 max-sm:justify-normal mt-4">
+                    <div v-for="img in sources" :key="img.id || img.file?.name" class="indicator relative">
+                        <span class="badge badge-ghost indicator-center indicator-item indicator-middle" v-if="img.isNew">New</span>
                         <label :for="img.id"
-                            class="w-20 h-20 sm:h-28 sm:w-28 bg-white rounded-md shadow-md cursor-pointer block relative overflow-hidden ">
-                            <img :src="img.path" alt="image-product" class="w-full h-full object-cover rounded-md">
-                            <input type="checkbox" :id="img.id" class="peer hidden"
+                            class="bg-white h-20 rounded-md shadow-md w-20 block cursor-pointer overflow-hidden relative sm:h-28 sm:w-28">
+                            <img :src="img.path" alt="image-product" class="h-full rounded-md w-full object-cover">
+                            <input type="checkbox" :id="img.id" class="hidden peer"
                                 @change="pushIdImage(img.id, $event)">
                             <div
-                                class="w-full h-full absolute inset-0 bg-black/50 justify-center items-center text-3xl text-green-500 peer-checked:flex hidden">
+                                class="bg-black/50 h-full justify-center text-3xl text-green-500 w-full absolute hidden inset-0 items-center peer-checked:flex">
                                 <font-awesome-icon icon="fa-solid fa-check" />
                             </div>
                         </label>
-                        <button class="absolute -top-2 -right-2 btn btn-circle btn-xs btn-error" type="button"
+                        <button class="btn btn-circle btn-error btn-xs -right-2 -top-2 absolute" type="button"
                             @click="removeImage(img)" >
                             <font-awesome-icon icon="fa-solid fa-xmark" />
                         </button>
@@ -62,7 +62,7 @@
         </section>
         <!-- Form Update -->
         <section>
-            <form @submit.prevent="updateBouquet" class="flex flex-col gap-y-3 md:px-20 lg:px-32">
+            <form @submit.prevent="updateBouquet" class="flex flex-col gap-y-3 lg:px-32 md:px-20">
                 <div>
                     <label for="name">Bouquet name</label>
                     <input type="text" id="name" name="name" class="input w-full" v-model="payload.name" required>
@@ -81,7 +81,7 @@
                 </div>
                 <div>
                     <label for="category">Category</label>
-                    <select class="select w-full" id="category" v-model="payload.categoryId" required>
+                    <select class="w-full select" id="category" v-model="payload.categoryId" required>
                         <option disabled value="">Select a category</option>
                         <option v-for="category in categories" :key="category.id" :value="category.id">
                             {{ category.name }}</option>
@@ -89,7 +89,7 @@
                 </div>
                 <div>
                     <label for="description">Description</label>
-                    <textarea class="textarea w-full h-48" id="description" name="description"
+                    <textarea class="h-48 w-full textarea" id="description" name="description"
                         v-model="payload.description" required></textarea>
                 </div>
                 <button class="btn btn-primary" type="submit">Update</button>
@@ -101,6 +101,7 @@
 <script setup>
 import { useBouquetStore } from '@/stores/bouquetStore';
 import { useCategoryStore } from '@/stores/categoryStore';
+import { storeToRefs } from 'pinia';
 import { ref, onMounted, reactive, computed, onUpdated, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { toast } from 'vue3-toastify';
@@ -118,7 +119,7 @@ const payload = reactive({
     categoryId: '',
     imageId: []
 });
-const categories = ref([]);
+const {categories} = storeToRefs(categoryStore);
 const sources = ref([]);
 const isUploading = ref(false);
 const isDelete = ref({
@@ -139,14 +140,6 @@ const getDetailBouquet = async () => {
     }
 };
 
-const getCategories = async () => {
-    try {
-        const response = await categoryStore.getCategories();
-        categories.value = response.data;
-    } catch (error) {
-        console.error(error);
-    }
-};
 
 const filesUpload = ref([])
 
@@ -265,6 +258,6 @@ watch(()=>isDelete.value.isDel,async ()=>{
 })
 
 onMounted(async () => {
-    await Promise.all([getCategories(), getDetailBouquet()]);
+    await Promise.all([getDetailBouquet()]);
 });
 </script>
