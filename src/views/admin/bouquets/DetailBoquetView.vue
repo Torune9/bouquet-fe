@@ -90,7 +90,7 @@
                 <div>
                     <label for="description">Description</label>
                     <textarea class="h-48 w-full textarea" id="description" name="description"
-                        v-model="payload.description" required></textarea>
+                        v-model="payload.description"></textarea>
                 </div>
                 <button class="btn btn-primary" type="submit">Update</button>
             </form>
@@ -102,7 +102,7 @@
 import { useBouquetStore } from '@/stores/bouquetStore';
 import { useCategoryStore } from '@/stores/categoryStore';
 import { storeToRefs } from 'pinia';
-import { ref, onMounted, reactive, computed, onUpdated, watch } from 'vue';
+import { ref, onMounted, reactive, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { toast } from 'vue3-toastify';
 
@@ -133,8 +133,6 @@ const getDetailBouquet = async () => {
         const response = await bouquetStore.getDetailBouquet(id);
         Object.assign(payload, response.data);
         sources.value = response.data.ImageBouquets.map(img => ({ id: img.id, path: img.path, isNew: false }));
-        console.log(sources.value);
-
     } catch (error) {
         console.error(error);
     }
@@ -146,8 +144,6 @@ const filesUpload = ref([])
 const uploadImage = (event) => {
     let files = Array.from(event.target.files);
     filesUpload.value.push(...files)
-    console.log(filesUpload.value);
-
 
     if (sources.value.length + files.length > 5) {
         filesUpload.value = []
@@ -215,18 +211,13 @@ const updateBouquet = async () => {
         formData.append("imageId", payload.imageId);
 
         if (filesUpload.value.length > 0) {
-
             filesUpload.value.forEach(file => {
-                console.log(file);
                 formData.append("image", file)
-
             });
 
         }
 
-        const response = await bouquetStore.updateBouquet(payload.id, formData);
-        console.log(response.data);
-
+        await bouquetStore.updateBouquet(payload.id,false,formData);
         toast.success("Bouquet updated successfully!");
     } catch (error) {
         console.error(error);
