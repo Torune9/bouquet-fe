@@ -14,12 +14,27 @@ export const useBouquetStore = defineStore('bouquet',{
                throw error
             }
         },
-        async getBouquets (){
+        async getBouquets (query) {
+            const params = {
+                category : query.category,
+                stockBelow : query.stockBelow,
+                stockAbove : query.stockAbove,
+                stockAsc : query.stock,
+                stockDesc : query.stock,
+                minPrice : query.minPrice,
+                maxPrice : query.maxPrice,
+                sortBy : query.sortBy,
+            } 
+            
+            if (query.isParanoid) {
+                params.paranoid = query.isParanoid
+            }
+
             try {
-                const response = await api.get('/bouquet')
-                return response.data
+                const response = await api.get('/bouquet',{params});
+                return response.data;
             } catch (error) {
-               throw error
+                throw error;
             }
         },
         async getDetailBouquet (id){
@@ -30,9 +45,25 @@ export const useBouquetStore = defineStore('bouquet',{
                throw error
             }
         },
-        async updateBouquet (id,payload){
+        async updateBouquet (id,isRestores,payload){
             try {
-                const response = await api.put(`/bouquet/${id}`,payload)
+                const response = await api.put(`/bouquet/${id}`,payload,{
+                    params : {
+                        restore : isRestores
+                    }
+                })
+                return response.data
+            } catch (error) {
+               throw error
+            }
+        },
+        async deleteBouquet (id,query){
+            try {
+                const response = await api.delete(`/bouquet/${id}`,{
+                    params : {
+                        force : query ? true : null
+                    }
+                })
                 return response.data
             } catch (error) {
                throw error
