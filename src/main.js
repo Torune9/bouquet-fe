@@ -18,6 +18,7 @@ import 'vue3-toastify/dist/index.css';
 
 import Vue3EasyDataTable from 'vue3-easy-data-table';
 import 'vue3-easy-data-table/dist/style.css';
+import Loading from './components/info/Loading.vue'
 
 library.add(fas,fab,far)
 
@@ -29,6 +30,7 @@ app.use(Vue3Toastify,{
 })
 
 app.component('EasyDataTable', Vue3EasyDataTable);
+app.component('LoadingOverlay',Loading)
 
 app.component('font-awesome-icon', FontAwesomeIcon)
 
