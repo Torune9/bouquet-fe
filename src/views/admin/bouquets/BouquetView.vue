@@ -1,5 +1,4 @@
 <template>
-
   <ConfirmModal :title="'Are you sure want to delete?'" modal-id="modal_delete" title-btn="Delete"
     @send-confirmation="getConfirmation" />
   <div class="flex flex-col gap-y-2">
