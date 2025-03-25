@@ -1,6 +1,6 @@
 <template>
     <ModalConfirm modal-id="my_modal" :bouquet="product" @add-to-cart="hasAddedToCart" />
-    <ModalImage :isOpen="isOpen" :src="srcImageModal" @close="closeModal"/>
+    <ModalImage :isOpen="isOpen" :src="srcImageModal" @close="closeModal" />
     <MainLayout>
         <template #content>
             <!-- navigation -->
@@ -45,8 +45,7 @@
                     <div class="flex flex-col gap-y-4">
                         <div>
                             <p>
-                                {{ product.description }}
-                                <!-- {{ !isExpanded ? `${product.description.slice(0, 100)}...` : product.description }} -->
+                                {{ !isExpanded && product.description ? `${product.description.slice(0, 100)}...` : product.description }}
                             </p>
                             <button @click="toggleExpand" class="text-blue-500 underline cursor-pointer text-sm">
                                 {{ showInfo }}
@@ -54,18 +53,15 @@
                         </div>
 
                         <div class="flex gap-x-2">
-                            <button @click="()=>quantity++" class="btn btn-xs">
+                            <button @click="() => quantity++" class="btn btn-xs">
                                 <font-awesome-icon icon="fa-solid fa-plus" />
                             </button>
                             <input type="text" v-model="quantity" class=" field-sizing-content text-center min-w-10">
-                            <button @click="()=>quantity--" class="btn btn-xs">
+                            <button @click="() => quantity == 0 ? 0 : quantity--" class="btn btn-xs">
                                 <font-awesome-icon icon="fa-solid fa-minus" />
                             </button>
                         </div>
                         <div class="flex flex-row justify-between items-center">
-                            <p class="border px-4 rounded-md">
-                                Category
-                            </p>
                             <span>
                                 <span class="border w-20 text-center rounded-md text-info inline-block mr-2">New</span>
                                 <span
@@ -84,10 +80,9 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="flex mt-4 flex-wrap gap-x-1 gap-y-4 justify-center sm:gap-x-4">
-                <ProductCard v-for="bouquet in products" :id="bouquet.id" :img="bouquet.img" :name="bouquet.name"
-                    :price="bouquet.price" />
-            </div> -->
+            <div class="flex mt-4 flex-wrap gap-x-1 gap-y-4 justify-center sm:gap-x-4">
+                <ProductCard v-for="bouquet in productsFilter" :bouquet="bouquet" />
+            </div>
         </template>
     </MainLayout>
 </template>
@@ -96,11 +91,10 @@
 import ModalConfirm from '@/components/info/ModalConfirm.vue';
 import ProductCard from '@/components/card/ProductCard.vue';
 import MainLayout from '@/layouts/MainLayout.vue';
-import img from '@/assets/img/img7.jpg'
 
 import { toast } from 'vue3-toastify';
 import { useOrderStore } from '@/stores/orderStore';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch, onUpdated } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useBouquetStore } from '@/stores/bouquetStore';
 import { useRoute } from 'vue-router';
@@ -122,47 +116,20 @@ const showInfo = computed(() => {
 const quantity = ref(1)
 
 const product = ref({})
-const heroImage = computed(()=>{
+const heroImage = computed(() => {
     return product.value.ImageBouquets?.shift()
 })
 
 const imgUrlDefault = 'https://placehold.co/600x400?text=Product+Image'
 
-const products = [
-    {
-        id: 1,
-        img: "https://placehold.co/600x400?text=Product+Image",
-        name: "Buket Mawar Merah",
-        price: 150000,
-    },
-    {
-        id: 2,
-        img: "https://placehold.co/600x400?text=Product+Image",
-        name: "Buket Lily Elegan",
-        price: 180000,
-    },
-    {
-        id: 3,
-        img: "https://placehold.co/600x400?text=Product+Image",
-        name: "Buket Campuran Romantis",
-        price: 200000,
-    },
-    {
-        id: 4,
-        img: "https://placehold.co/600x400?text=Product+Image",
-        name: "Buket Wisuda Spesial",
-        price: 170000,
-    },
-    {
-        id: 5,
-        img: "https://placehold.co/600x400?text=Product+Image",
-        name: "Buket Tulip Mewah",
-        price: 220000,
-    }
-];
+const products = ref([])
+const productsFilter = computed(()=>{
+    return products.value.filter(val => val.id !== router.params.id)
+})
 
 const orderStore = useOrderStore();
 const { cart } = storeToRefs(orderStore);
+const router = useRoute()
 
 const isOpen = ref(false)
 const srcImageModal = ref('')
@@ -172,7 +139,7 @@ const setImage = (event) => {
     srcImageModal.value = event.target.src
 }
 
-const closeModal = (data)=>{
+const closeModal = (data) => {
     return isOpen.value = data
 }
 
@@ -186,28 +153,48 @@ const hasAddedToCart = (isAdded) => {
             existingProduct.quantity += quantity.value;
             toast.info(`${existingProduct.name} quantity updated to ${existingProduct.quantity}`);
         } else {
-            console.log(cart.value);
-            
-            cart.value.push({ ...product.value, quantity : quantity.value, selected: false });
+            cart.value.push({ ...product.value, quantity: quantity.value, selected: false });
             toast.success('Successfully added to cart');
         }
     }
     quantity.value = 1
 }
 
-const getDetailBouquet = async ()=>{
-    const router = useRoute()
+const getDetailBouquet = async () => {
     try {
         const response = await bouquetStore.getDetailBouquet(router.params.id)
-        Object.assign(product.value,response.data)
-        console.log(product.value);
-        
+        Object.assign(product.value, response.data)
     } catch (error) {
         console.log(error);
-        
+
     }
 }
 
-onMounted(()=>getDetailBouquet())
+const getBouquet = async (id) => {
+    try {
+        const response = await bouquetStore.getBouquets({ category: id })
+        products.value = response.data
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+watch(product, (newVal, oldVal) => {
+    if (newVal) {
+        getBouquet(newVal.categoryId)
+    }
+}, {
+    deep: true
+})
+
+watch(router, () => {
+    getBouquet(router.params.id) 
+},{
+    deep :true
+})
+
+onUpdated(()=>getDetailBouquet())
+
+onMounted(() => getDetailBouquet())
 
 </script>
