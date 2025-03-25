@@ -6,5 +6,12 @@ export const useOrderStore = defineStore('order',{
         selectedItems: [],
         totalPrice : 0
     }),
-    persist : true
+    persist : true,
+    actions : {
+        resetPrice (){
+            if (this.cart.length == 0 && this.selectedItems.length == 0) {
+                return this.totalPrice = 0
+            }
+        }
+    }
 })
