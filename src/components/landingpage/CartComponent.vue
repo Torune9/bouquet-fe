@@ -19,7 +19,7 @@
                         <font-awesome-icon icon="fa-solid fa-xmark" size="xl" />
                     </button>
                     <div class="h-28 w-3/4 rounded-lg overflow-hidden">
-                        <img :src="product.ImageBouquets[3].path" class="w-full h-full object-cover" />
+                        <img :src="product.ImageBouquets.length > 0 ? product.ImageBouquets[product.ImageBouquets.length - 1].path : 'https://placehold.co/600x400?text=Bouquet Image'" class="w-full h-full object-cover" />
                     </div>
                     <div class="flex flex-col item h-full w-full pl-4">
                         <h1 class="text-lg hover:underline">
