@@ -19,7 +19,8 @@
                         <font-awesome-icon icon="fa-solid fa-xmark" size="xl" />
                     </button>
                     <div class="h-28 w-3/4 rounded-lg overflow-hidden">
-                        <img :src="product.ImageBouquets.length > 0 ? product.ImageBouquets[product.ImageBouquets.length - 1].path : 'https://placehold.co/600x400?text=Bouquet Image'" class="w-full h-full object-cover" />
+                        <img :src="product.ImageBouquets.length > 0 ? product.ImageBouquets[product.ImageBouquets.length - 1].path : 'https://placehold.co/600x400?text=Bouquet Image'"
+                            class="w-full h-full object-cover" />
                     </div>
                     <div class="flex flex-col item h-full w-full pl-4">
                         <h1 class="text-lg hover:underline">
@@ -77,7 +78,7 @@ const props = defineProps({
 
 const orderStore = useOrderStore()
 
-const { cart,selectedItems,totalPrice } = storeToRefs(orderStore)
+const { cart, selectedItems, totalPrice } = storeToRefs(orderStore)
 
 const increment = (product) => {
     return product.quantity++
@@ -90,7 +91,11 @@ const decrement = (product) => {
 }
 
 const removeFromCart = (index) => {
-    return cart.value.splice(index, 1)
+    return [
+        cart.value.splice(index, 1),
+        selectedItems.value.splice(index, 1),
+        orderStore.resetPrice()
+    ]
 }
 
 const sliceName = (name) => name.length > 15 ? `${name.slice(0, 15)}....` : name
