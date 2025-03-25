@@ -1,6 +1,5 @@
 <template>
-  <ConfirmModal :title="'Are you sure want to delete?'" modal-id="modal_delete" title-btn="Delete"
-    @send-confirmation="getConfirmation" />
+  <ModalConfirm modal-id="show_modal" @send-confirmation="getConfirmation" title="Delete bouquet" titleBtn="delete" actionType="isDelete"/>
   <div class="flex flex-col gap-y-2">
     <!-- Searching -->
     <section>
@@ -66,12 +65,12 @@
 </template>
 
 <script setup>
+import ModalConfirm from '@/components/modal/ModalConfirm.vue'
 import { useBouquetStore } from '@/stores/bouquetStore'
 import { computed, onMounted, ref } from 'vue'
 import { toast } from 'vue3-toastify'
 import { formatToIdr } from '@/services/formatter'
 import FilterBouquet from '@/components/info/FilterBouquet.vue'
-import ConfirmModal from '@/components/info/ConfirmModal.vue'
 
 const bouquetStore = useBouquetStore()
 const bouquets = ref([])
@@ -108,7 +107,7 @@ const force = ref(null)
 const deleteBouquet = (id, deletedAt) => {
   bouquetId.value = id
   force.value = deletedAt
-  return modal_delete.showModal()
+  return show_modal.showModal()
 }
 
 const deleteBouquetTruly = async () => {
@@ -127,8 +126,9 @@ const deleteBouquetTruly = async () => {
   }
 }
 
-const getConfirmation = (data) => {
-  if (data) {
+const getConfirmation = ({isDelete}) => {
+  
+  if (isDelete) {
     deleteBouquetTruly()
   }
 }
