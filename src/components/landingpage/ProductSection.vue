@@ -1,89 +1,63 @@
 <template>
   <div class="p-2">
     <h1 class="text-center text-2xl">A Sprig of Love, a Million Meanings.</h1>
-    <fieldset class="fieldset">
+    <fieldset class="fieldset md:px-8 lg:px-18">
       <legend class="fieldset-legend">Search bouquet</legend>
       <label class="input w-full ">
         <font-awesome-icon icon="fa-solid fa-magnifying-glass" />
-        <input type="search" required placeholder="Search" />
+        <input type="search" required placeholder="Search" v-model="search" />
       </label>
 
     </fieldset>
-    <div class="mt-4">
-      <small>Filter</small>
-      <input type="checkbox"
-        class="toggle peer ml-2 checked:bg-amber-400 checked:border-amber-600 checked:text-amber-800" />
-
-      <div class="filter hidden peer-checked:flex mt-4 gap-y-2">
-        <input class="btn filter-reset" type="radio" name="queryFilter" aria-label="All" />
-        <input class="btn" name="queryFilter" type="radio" :value="filter.value" :aria-label="filter.name"
-          v-for="filter in filterQuery" />
-      </div>
+    <div class="mt-4 md:px-8 lg:px-18">
+      <FilterBouquet @send-filterization="captureFilterization" />
     </div>
     <div class="flex mt-4 flex-wrap gap-x-1 gap-y-4 justify-center sm:gap-x-4">
-      <ProductCard v-for="bouquet in products" :id="bouquet.id" :img="bouquet.img" :name="bouquet.name"
-        :price="bouquet.price" />
+      <div class="flex flex-wrap gap-4 justify-center" v-if="isLoading">
+        <div class="flex w-40 md:w-52 flex-col gap-4 md:gap-10" v-for="n in 8">
+          <div class="skeleton h-32 w-full"></div>
+          <div class="skeleton h-4 w-28"></div>
+          <div class="skeleton h-4 w-full"></div>
+          <div class="skeleton h-4 w-full"></div>
+        </div>
+      </div>
+      <ProductCard v-for="bouquet in productSearch" :bouquet="bouquet" v-else/>
     </div>
   </div>
 </template>
 
 <script setup>
-import ProductCard from '../info/ProductCard.vue';
+import { useBouquetStore } from '@/stores/bouquetStore';
+import ProductCard from '../card/ProductCard.vue';
+import { computed, onMounted, ref } from 'vue';
+import FilterBouquet from '../info/FilterBouquet.vue';
+const bouquetStore = useBouquetStore()
 
-const filterQuery = [
-  {
-    name: 'cheap',
-    value: 'priceAsc'
-  },
-  {
-    name: 'expensive',
-    value: 'priceDesc'
-  },
-  {
-    name: 'newest',
-    value: 'latest'
-  },
-  {
-    name: 'oldest',
-    value: 'oldest'
-  },
-  {
-    name: 'latest price',
-    value: 'latestPriceAsc'
+const filters = ref({})
+const isLoading = ref(false)
+const search = ref('')
+
+const products = ref([])
+const getBouquets = async () => {
+  isLoading.value = true
+  try {
+    const response = await bouquetStore.getBouquets(filters.value)
+    products.value = response.data
+  } catch (error) {
+    console.log(error)
+  } finally {
+    isLoading.value = false
   }
-]
+}
+const productSearch = computed(() => {
+  return products.value.filter(val => val.name.toLowerCase().includes(search.value.toLowerCase()))
+})
+const captureFilterization = (filterData) => {
+  filters.value = filterData
+  getBouquets()
+}
 
-const products = [
-  {
-    id: 1,
-    img: "https://placehold.co/600x400?text=Product+Image",
-    name: "Buket Mawar Merah",
-    price: 150000,
-  },
-  {
-    id: 2,
-    img: "https://placehold.co/600x400?text=Product+Image",
-    name: "Buket Lily Elegan",
-    price: 180000,
-  },
-  {
-    id: 3,
-    img: "https://placehold.co/600x400?text=Product+Image",
-    name: "Buket Campuran Romantis",
-    price: 200000,
-  },
-  {
-    id: 4,
-    img: "https://placehold.co/600x400?text=Product+Image",
-    name: "Buket Wisuda Spesial",
-    price: 170000,
-  },
-  {
-    id: 5,
-    img: "https://placehold.co/600x400?text=Product+Image",
-    name: "Buket Tulip Mewah",
-    price: 220000,
-  }
-];
-
+onMounted(() => {
+  getBouquets()
+})
 </script>
