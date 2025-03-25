@@ -8,7 +8,7 @@
             <!-- Filter -->
             <div class="flex flex-wrap gap-4">
                 <!-- Filter Kategori -->
-                <div>
+                <div v-if="isDeleted">
                     <h1 class="text-sm">Categories</h1>
                     <select class="select cursor-pointer" v-model="filter.selectedCategory" @change="sendFilterization">
                         <option value="">All category</option>
@@ -61,7 +61,7 @@
                 </form>
             </div>
             <!-- Paranoid  -->
-            <div class="space-x-2">
+            <div class="space-x-2" v-if="isDeleted">
                 <input @change="sendFilterization" type="checkbox" v-model="filter.isParanoid" id="paranoid" class="checkbox checkbox-neutral" />
                 <label for="paranoid">Deleted Bouquets</label>
             </div>
@@ -73,7 +73,14 @@
 import { formatToIdr } from '@/services/formatter'
 import { useCategoryStore } from '@/stores/categoryStore'
 import { storeToRefs } from 'pinia'
-import { reactive,shallowReactive, ref, watch } from 'vue'
+import { shallowReactive, ref, watch } from 'vue'
+
+defineProps({
+    isDeleted : {
+        type : Boolean,
+        default : true
+    }
+})
 
 const orders = [
     { name: 'lowest price', value: 'priceAsc' },
@@ -83,6 +90,7 @@ const orders = [
     { name: 'high stock', value: 'stockDesc' },
     { name: 'low stock', value: 'stockAsc' },
 ]
+
 const isActiveFilter = ref(false)
 
 const categoryStore = useCategoryStore()
