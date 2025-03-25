@@ -15,6 +15,30 @@ export const useCategoryStore = defineStore('categories',{
             } catch (error) {
                 throw error
             }
-        }
+        },
+        async addCategory (payload){
+            try {
+                const response = await api.post('/category',payload)
+                return response.data
+            } catch (error) {
+                throw error
+            }
+        },
+        async updateCategory (id,payload){
+            try {
+                const response = await api.put(`/category/${id}`,payload)
+                return response.data
+            } catch (error) {
+                throw error
+            }
+        },
+        async deleteCategory (id){
+            try {
+                const response = await api.delete(`/category/${id}`)
+                return response.data
+            } catch (error) {
+                throw error
+            }
+        },
     }
 })
