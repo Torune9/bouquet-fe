@@ -5,7 +5,7 @@
                 <a class="btn btn-ghost text-xl font-light">SnfBouquet</a>
             </div>
             <div class="flex gap-x-4">
-                <RouterLink class="flex items-center" to="/">
+                <RouterLink class="flex items-center" to="/bouquet" active-class="btn btn-circle">
                     <button class="btn btn-circle btn-ghost">
                         <font-awesome-icon icon="fa-solid fa-house-chimney" size="lg" />
                     </button>
