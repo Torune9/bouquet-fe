@@ -10,7 +10,7 @@
 
     </fieldset>
     <div class="mt-4 md:px-8 lg:px-18">
-      <FilterBouquet @send-filterization="captureFilterization" />
+      <FilterBouquet @send-filterization="captureFilterization" :is-deleted="false"/>
     </div>
     <div class="flex mt-4 flex-wrap gap-x-1 gap-y-4 justify-center sm:gap-x-4">
       <div class="flex flex-wrap gap-4 justify-center" v-if="isLoading">
@@ -29,8 +29,13 @@
 <script setup>
 import { useBouquetStore } from '@/stores/bouquetStore';
 import ProductCard from '../card/ProductCard.vue';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import FilterBouquet from '../info/FilterBouquet.vue';
+const props = defineProps({
+  category : {
+    type : String,
+  }
+})
 const bouquetStore = useBouquetStore()
 
 const filters = ref({})
@@ -42,7 +47,7 @@ const getBouquets = async () => {
   isLoading.value = true
   try {
     const response = await bouquetStore.getBouquets(filters.value)
-    products.value = response.data
+    products.value = response.data.filter(val => val.stock !== 0)
   } catch (error) {
     console.log(error)
   } finally {
@@ -52,10 +57,19 @@ const getBouquets = async () => {
 const productSearch = computed(() => {
   return products.value.filter(val => val.name.toLowerCase().includes(search.value.toLowerCase()))
 })
+
 const captureFilterization = (filterData) => {
   filters.value = filterData
   getBouquets()
 }
+
+watch(()=>props.category,()=>{
+  Object.assign(filters.value,{
+    category : props.category
+  })
+
+  return getBouquets()
+})
 
 onMounted(() => {
   getBouquets()
