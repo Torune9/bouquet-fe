@@ -99,12 +99,13 @@
                 <button class="btn btn-success">Add</button>
             </form>
         </section>
+        
     </div>
 </template>
 
 <script setup>
 import { useBouquetStore } from '@/stores/bouquetStore';
-import { ref, computed, reactive, onMounted } from 'vue';
+import { ref, computed, reactive} from 'vue';
 import { toast } from 'vue3-toastify';
 import { required, integer } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
@@ -210,8 +211,7 @@ const addBouquet = async () => {
         if (!isValidate) return
 
         const response = await bouquetStore.addBouquet(payloads)
-        console.log(response.data);
-        
+    
         if (response) {
             return router.replace({
                 path: '/admin/bouquet',
