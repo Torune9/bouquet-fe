@@ -1,7 +1,7 @@
 <template>
   <div class="p-2">
     <h1 class="text-center text-2xl">A Sprig of Love, a Million Meanings.</h1>
-    <fieldset class="fieldset md:px-8 lg:px-18">
+    <fieldset class="fieldset md:px-8 lg:px-18" v-if="productSearch.length !== 0">
       <legend class="fieldset-legend">Search bouquet</legend>
       <label class="input w-full ">
         <font-awesome-icon icon="fa-solid fa-magnifying-glass" />
@@ -9,10 +9,15 @@
       </label>
 
     </fieldset>
-    <div class="mt-4 md:px-8 lg:px-18">
+    <div class="mt-4 md:px-8 lg:px-18" v-if="productSearch.length !== 0">
       <FilterBouquet @send-filterization="captureFilterization" :is-deleted="false"/>
     </div>
-    <div class="flex mt-4 flex-wrap gap-x-1 gap-y-4 justify-center sm:gap-x-4">
+    <div v-if="productSearch.length == 0">
+      <p class="text-center text-sm p-4">
+        Sorry,bouquets not available
+      </p>
+    </div>
+    <div class="flex mt-4 flex-wrap gap-x-1 gap-y-4 justify-center sm:gap-x-4" v-else>
       <div class="flex flex-wrap gap-4 justify-center" v-if="isLoading">
         <div class="flex w-40 md:w-52 flex-col gap-4 md:gap-10" v-for="n in 8">
           <div class="skeleton h-32 w-full"></div>
