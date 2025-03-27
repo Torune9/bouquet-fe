@@ -13,8 +13,8 @@ api.interceptors.request.use(
 
         const token = useAuthStore()?.token;
         const protectedEndpoints = [
-            '/profile',
-            '/address',
+            '/user/profile',
+            '/user/address',
             '/role'
         ];
 
