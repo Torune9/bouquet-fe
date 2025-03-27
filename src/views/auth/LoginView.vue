@@ -9,16 +9,19 @@
                 <form action="" class="flex flex-col items-center md:w-lg sm:w-sm w-full" @submit.prevent="login">
                     <fieldset class="fieldset w-full">
                         <legend class="fieldset-legend">Email</legend>
-                        <input type="text" class="input w-full focus:outline-0" placeholder="Type here" v-model="payload.email" />
-                        <p class="fieldset-label text-red-600" v-show="v$.email.$error" v-for="error in v$.email.$errors">{{ error.$message }}
+                        <input type="text" class="input w-full focus:outline-0" placeholder="Type here"
+                            v-model="payload.email" />
+                        <p class="fieldset-label text-red-600" v-show="v$.email.$error"
+                            v-for="error in v$.email.$errors">{{ error.$message }}
                         </p>
                     </fieldset>
                     <fieldset class="fieldset w-full">
                         <legend class="fieldset-legend">Password</legend>
                         <input type="password" class="input w-full focus:outline-0" placeholder="Type here"
                             v-model="payload.password" />
-                            <p class="fieldset-label text-red-600" v-show="v$.password.$error" v-for="error in v$.password.$errors">{{ error.$message }}
-                            </p>
+                        <p class="fieldset-label text-red-600" v-show="v$.password.$error"
+                            v-for="error in v$.password.$errors">{{ error.$message }}
+                        </p>
                     </fieldset>
                     <button
                         class="btn bg-orioles-orange text-orioles-linen hover:bg-orange-500 w-full transition-colors duration-300">
@@ -50,9 +53,9 @@ import img from '@/assets/img/img4.jpg'
 import { useAuthStore } from '@/stores/authStore'
 import useVuelidate from '@vuelidate/core'
 import { email, minLength, required } from '@vuelidate/validators'
-import { computed, reactive } from 'vue'
+import { computed, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-
+import { toast } from 'vue3-toastify'
 const rules = computed(() => ({
     email: {
         required,
@@ -84,12 +87,25 @@ const login = async () => {
 
         const response = await authStore.login(payload)
 
-        return router.push({
-            name : 'bouquet'
+        return router.replace({
+            path: '/bouquet',
+            state: {
+                isSuccess: true
+            }
         })
 
     } catch (error) {
         return error
     }
 }
+
+onMounted(() => {
+    if (history.state.isSuccess) {
+        toast.success('Register success', {
+            onClose: () => {
+                history.replaceState(null, '')
+            }
+        })
+    }
+})
 </script>
