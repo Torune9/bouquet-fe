@@ -6,15 +6,19 @@
                 <form @submit.prevent="register" class="flex flex-col items-center md:w-lg sm:w-sm w-full">
                     <fieldset class="fieldset w-full">
                         <legend class="fieldset-legend">Username</legend>
-                        <input type="text" class="input w-full focus:outline-0" placeholder="Type here" v-model="payload.username" />
-                        <p class="fieldset-label text-red-500" v-show="v$.username.$error" v-for="error of v$.username.$errors">
+                        <input type="text" class="input w-full focus:outline-0" placeholder="Type here"
+                            v-model="payload.username" />
+                        <p class="fieldset-label text-red-500" v-show="v$.username.$error"
+                            v-for="error of v$.username.$errors">
                             {{ error.$message }}
                         </p>
                     </fieldset>
                     <fieldset class="fieldset w-full">
                         <legend class="fieldset-legend">Email</legend>
-                        <input type="text" class="input w-full focus:outline-0" placeholder="Type here" v-model="payload.email" />
-                        <p class="fieldset-label text-red-500" v-show="v$.email.$error" v-for="error of v$.email.$errors">
+                        <input type="text" class="input w-full focus:outline-0" placeholder="Type here"
+                            v-model="payload.email" />
+                        <p class="fieldset-label text-red-500" v-show="v$.email.$error"
+                            v-for="error of v$.email.$errors">
                             {{ error.$message }}
                         </p>
                     </fieldset>
@@ -22,7 +26,8 @@
                         <legend class="fieldset-legend">Password</legend>
                         <input type="password" class="input w-full focus:outline-0" placeholder="Type here"
                             v-model="payload.password" />
-                        <p class="fieldset-label text-red-500" v-show="v$.password.$error" v-for="error of v$.password.$errors">
+                        <p class="fieldset-label text-red-500" v-show="v$.password.$error"
+                            v-for="error of v$.password.$errors">
                             {{ error.$message }}
                         </p>
                     </fieldset>
@@ -85,20 +90,25 @@ const register = async () => {
     try {
         const isFormCorrect = await v$.value.$validate()
         if (!isFormCorrect) return
-        const response = await authStore.register(payload)
 
-        return router.push('/sign-in')
-    } catch (error) {
-        if (error.status== 409) {
-            toast.warning('email already exist')
-        }else{
-            toast.error(error)
-        }
-        
-    }finally{
-        payload.email = '',
+        payload.email = ''
         payload.username = ''
         payload.password = ''
+
+        const response = await authStore.register(payload)
+
+        return router.replace({
+                path: '/sign-n',
+                state: {
+                    isSuccess: true
+                }
+            })
+    } catch (error) {
+        if (error.status == 409) {
+            toast.warning('email already exist')
+        } else {
+            toast.error(error)
+        }
     }
 }
 
