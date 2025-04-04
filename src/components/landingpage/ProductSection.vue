@@ -12,7 +12,7 @@
     <div class="mt-4 md:px-8 lg:px-18" v-if="productSearch.length !== 0">
       <FilterBouquet @send-filterization="captureFilterization" :is-deleted="false"/>
     </div>
-    <div v-if="productSearch.length == 0">
+    <div v-if="productSearch.length == 0 && !isLoading">
       <p class="text-center text-sm p-4">
         Sorry,bouquets not available
       </p>
