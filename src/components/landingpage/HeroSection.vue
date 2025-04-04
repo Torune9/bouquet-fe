@@ -6,7 +6,7 @@
                 Custom bouquet 
                 & More flower
             </h1>
-            <button class="border cursor-pointer btn btn-sm btn-outline">
+            <button @click="scrollToProduct" class="border cursor-pointer btn btn-sm btn-outline">
                 Browse
             </button>
         </div>
@@ -14,5 +14,10 @@
 </template>
 
 <script setup>
-import img from '@/assets/img/img8.jpg'
+
+const emit = defineEmits(['scroll-to-product']);
+
+const scrollToProduct = () => {
+  emit('scroll-to-product');
+};
 </script>
