@@ -1,7 +1,8 @@
 <template>
+    <LoadingOverlay :isLoading="isLoading"/>
     <Transition name="slide-fade">
         <div v-if="isShowCart"
-            class="fixed bg-black/30 w-full h-[90dvh] max-sm:h-[90vh] flex-col flex z-30 box-border items-end overflow-y-auto font-archivo hide-scrollbar">
+            class="fixed bg-black/30 w-full h-[90dvh] max-sm:h-[90vh] flex-col flex z-30 box-border items-end overflow-y-auto font-archivo hide-scrollbar" @click="closeCart" id="wrapper">
             <h1 class="sticky top-0 w-full lg:w-2/5 sm:w-2/4 bg-orioles-orange p-4 text-xl text-orioles-linen">Your Cart
             </h1>
             <div class="bg-white shadow-xl w-full flex flex-col gap-2 p-2 lg:w-2/5 sm:w-2/4 h-full overflow-y-auto hide-scrollbar"
@@ -50,14 +51,14 @@
                 <p class="text-lg mb-2">
                     Total Price : {{ formatToIdr(totalSelectedPrice) }}
                 </p>
-                <button class="btn btn-md btn-neutral w-full">Checkout</button>
+                <button class="btn btn-md btn-neutral w-full" @click="checkout">Checkout</button>
             </div>
             <div class="bg-white shadow-xl w-full h-full flex flex-col overflow-y-auto scroll-smooth gap-2 p-2 hide-scrollbar lg:w-2/5 sm:w-2/4 items-center justify-center"
                 v-else>
                 <p>Opps don't have any products in your cart yet</p>
                 <p>Come explore the interesting bouquet</p>
                 <RouterLink to="/bouquet">
-                    <button class="btn btn-neutral">Buy Now</button>
+                    <button class="btn btn-neutral" id="btnBuy">Buy Now</button>
                 </RouterLink>
             </div>
         </div>
@@ -66,8 +67,14 @@
 <script setup>
 import { formatToIdr } from '@/services/formatter';
 import { useOrderStore } from '@/stores/orderStore';
+import { useAuthStore } from '@/stores/authStore';
 import { storeToRefs } from 'pinia';
-import { ref, computed } from 'vue';
+import { ref,reactive,computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useProfileStore } from '@/stores/profileStore';
+import { toast } from 'vue3-toastify';
+import { openSnap } from '@/services/snap';
+
 
 const props = defineProps({
     isShowCart: {
@@ -76,9 +83,30 @@ const props = defineProps({
     }
 })
 
-const orderStore = useOrderStore()
+const emits = defineEmits(['close'])
 
+const closeCart = (event)=>{
+    switch (event.target.id) {
+        case 'wrapper':
+            return emits('close',false)
+        case 'btnBuy' : 
+            return emits('close',false)
+        default:
+            break;
+    }  
+}
+
+const profileStore = useProfileStore()
+const orderStore = useOrderStore()
+const userStore = useAuthStore()
+
+const router = useRouter()
+
+const {currentUser} = storeToRefs(userStore)
+const {activeAddress,profile,address} = storeToRefs(profileStore)
 const { cart, selectedItems, totalPrice } = storeToRefs(orderStore)
+
+const isLoading = ref(false)
 
 const increment = (product) => {
     return product.quantity++
@@ -102,6 +130,8 @@ const sliceName = (name) => name.length > 15 ? `${name.slice(0, 15)}....` : name
 
 const selectedItem = (product) => {
     if (product.selected) {
+        console.log(selectedItems.value);
+        
         selectedItems.value.push(product)
     } else {
         selectedItems.value = selectedItems.value.filter(item => item.id !== product.id);
@@ -111,10 +141,53 @@ const selectedItem = (product) => {
 
 const totalSelectedPrice = computed(() => {
     totalPrice.value = selectedItems.value.reduce((total, item) => total + (item.price * item.quantity), 0)
-
     return totalPrice.value
 })
 
+
+const payload = reactive({
+    userId: currentUser.value?.id,
+    email: currentUser.value?.email,
+    addressId: activeAddress.value?.id,
+    phone: profile.value?.phoneNumber || '',
+    firstName: profile.value?.firstName,
+    lastName: profile.value?.lastName,
+    items: computed(()=>selectedItems.value.map(val => ({
+        id : val.id,
+        quantity : val.quantity,
+        name : val.name,
+        price : val.price
+    }))),
+    totalPrice: computed(()=>totalSelectedPrice.value)
+})
+
+const checkout = async()=>{ 
+
+    if (!currentUser.value?.token) {
+        return toast.info('please login first')
+    }
+    
+    if (!profile.value || address.value.length == 0) {
+        return toast.warning("Please complete your profile first")
+    } 
+    if (!activeAddress.value) {
+        return toast.warning("Please select one active address")
+    }
+    if (selectedItems.value.length == 0) {
+        return toast.info("Please select one items before checkout")
+    }
+    isLoading.value = !isLoading.value
+    try { 
+        const response = await orderStore.createOrder(payload)
+        openSnap(response.data.snapToken,router)
+        selectedItems.value = []
+        cart.value = cart.value.filter(val => !val.selected)
+    } catch (error) {
+        console.log(error);
+    }finally{
+        isLoading.value = !isLoading.value
+    }
+}
 </script>
 
 <style scoped>
