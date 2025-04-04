@@ -1,7 +1,7 @@
 <template>
     <NavBar @show-cart="showCart"/>
 
-    <CartComponent :is-show-cart="isShowCart"/>
+    <CartComponent :is-show-cart="isShowCart" @close="closeCart"/>
 
     <main class="font-archivo overflow-x-hidden relative">
         <slot name="content" />
@@ -21,5 +21,9 @@ const isShowCart = ref(false)
 
 const showCart = ()=>{
     isShowCart.value = !isShowCart.value
+}
+
+const closeCart = (data) => {
+    isShowCart.value = data
 }
 </script>
