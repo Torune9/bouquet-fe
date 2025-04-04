@@ -19,8 +19,7 @@ export const useAuthStore = defineStore('authenticate',{
                 this.currentUser = data
                 this.token = token
                 return response.data
-            } catch (error) {
-                toast.error(error.response.data.message)
+            } catch (error) {        
                 throw error
             }
         },
