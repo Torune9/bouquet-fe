@@ -15,7 +15,8 @@ api.interceptors.request.use(
         const protectedEndpoints = [
             '/user/profile',
             '/user/address',
-            '/role'
+            '/role',
+            '/order'
         ];
 
         const restrictedEndpoints = [
