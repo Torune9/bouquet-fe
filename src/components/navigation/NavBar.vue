@@ -55,6 +55,7 @@
 <script setup>
 import { useAuthStore } from '@/stores/authStore'
 import { useOrderStore } from '@/stores/orderStore'
+import { useProfileStore } from '@/stores/profileStore'
 import { storeToRefs } from 'pinia'
 
 
@@ -70,6 +71,9 @@ const { cart } = storeToRefs(orderStore)
 const authStore = useAuthStore()
 const { isAuthenticated } = storeToRefs(authStore)
 
-const logout = () => authStore.logout()
+const logout = () => {
+    useProfileStore().$reset()
+    return  authStore.logout()
+}
 
 </script>
