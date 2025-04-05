@@ -10,11 +10,17 @@ export const userRoutes = [
     {
         path: "/sign-in",
         name: "login",
+        meta : {
+            isNotAuth : true
+        },
         component: LoginView,
     },
     {
         path: "/sign-up",
         name: "register",
+        meta : {
+            isNotAuth : true
+        },
         component: RegisterView,
     },
     {
@@ -26,6 +32,9 @@ export const userRoutes = [
         path: "/profile",
         name: "profile",
         component: ProfileView,
+        meta : {
+            requireAuth : true,
+        },
         children: [
             {
                 path: "",
@@ -40,6 +49,9 @@ export const userRoutes = [
     {
         path: "/order-list",
         name: "history",
+        meta : {
+            requireAuth : true,
+        },
         component: ListOrderView,
     },
 ];

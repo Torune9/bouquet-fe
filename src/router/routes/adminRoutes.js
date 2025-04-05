@@ -14,6 +14,10 @@ export const adminRoutes = [
         path : '/admin',
         name : 'admin',
         component : AdminLayout,
+        meta : {
+            requireAuth : true,
+            role : 'admin'
+        },
         redirect : '/admin/dashboard',
         children : [
             {
