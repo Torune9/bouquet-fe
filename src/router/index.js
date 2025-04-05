@@ -20,24 +20,27 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const auth = useAuthStore();
+    const auth = useAuthStore();
 
-  if (to.meta.requireAuth && !auth.isAuthenticated) {
-      if (to.name !== "login") {
-          next({ name: "login" });
-      } else {
-          next();
-      }
-  } else if (to.meta.isNotAuth && auth.isAuthenticated) {
-      if (to.name !== "bouquet") {
-          next({ name: "bouquet" });
-      } else {
-          next();
-      }
-  } else {
-      next();
-  }
+    if (to.meta.requireAuth && !auth.isAuthenticated) {
+        if (to.name !== "login") {
+            next({ name: "login" });
+        } else {
+            next();
+        }
+    } else if (to.meta.isNotAuth && auth.isAuthenticated) {
+        if (to.name !== "bouquet") {
+            next({ name: "bouquet" });
+        } else {
+            next();
+        }
+    } else if (to.meta.role == "admin" && auth.currentUser.role.name == "user") {
+        next({
+            name: "bouquet",
+        });
+    } else {
+        next();
+    }
 });
-
 
 export default router;
