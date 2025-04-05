@@ -1,13 +1,13 @@
 <template>
     <MainLayout>
         <template #content>
-            <HeroSection />
+            <HeroSection @scroll-to-product="scrollToProduct"/>
 
             <MarqueeComponent />
 
             <CategorySection class="mt-4" @send-category-id="getCategory" />
 
-            <ProductSection class="mt-4" :category="id" />
+            <ProductSection class="mt-4" :category="id" id="product-section"/>
         </template>
     </MainLayout>
 </template>
@@ -25,6 +25,13 @@ const id = ref('')
 const getCategory = (category) => {
     return id.value = category
 }
+
+const scrollToProduct = () => {
+    const section = document.getElementById('product-section');
+    if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+    }
+};
 
 onMounted(() => { })
 if (history.state.isSuccess) {
