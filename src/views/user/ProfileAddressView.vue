@@ -65,23 +65,31 @@
     <!-- <ul> sekarang akan mengisi sisa ruang -->
     <ul class="overflow-y-auto flex-grow min-h-0">
         <li class="border-b py-2 inline-flex justify-between items-center w-full" v-for="address in addresses">
-           <div class="flex flex-col">
-            <p>
-                <span class="capitalize">{{ address.street }}</span>,
-                <span>{{ address.district }}</span>
-                <span>{{ address.regency }}</span>,
-            </p>
-            <p class="text-sm">
-                <span>{{ address.city }}</span>,
-                <span>{{ address.province }}</span>.
-            </p>
-            <p class="text-xs">
-                {{ address.postalCode }} 
-            </p>
-           </div>
-            <button class="btn btn-ghost btn-circle" type="button" @click="deleteAddress(address.id)">
-                <font-awesome-icon icon="fa-solid fa-xmark" />
-            </button>
+            <div class="flex flex-col">
+                <p>
+                    <span class="capitalize">{{ address.street }}</span>,
+                    <span>{{ address.district }}</span>
+                    <span>{{ address.regency }}</span>,
+                </p>
+                <p class="text-sm">
+                    <span>{{ address.city }}</span>,
+                    <span>{{ address.province }}</span>.
+                </p>
+                <p class="text-xs">
+                    {{ address.postalCode }}
+                </p>
+            </div>
+            <div class="space-x-4 space-y-4 sm:space-y-0">
+                <button class="btn btn-sm sm:btn-md btn-circle btn-success tooltip tooltip-left" type="button"
+                    @click="setActive(address)" data-tip="set active address" v-if="address.id !== activeAddress?.id">
+                    <font-awesome-icon icon="fa-solid fa-check" />
+                </button>
+                <small v-else class="bg-amber-500 rounded-md p-1 sm:inline block">activated</small>
+                <button class="btn btn-sm sm:btn-md btn-circle btn-error tooltip tooltip-left" type="button"
+                    @click="deleteAddress(address.id)" data-tip="delete address">
+                    <font-awesome-icon icon="fa-solid fa-xmark" />
+                </button>
+            </div>
         </li>
     </ul>
 </template>
@@ -161,10 +169,13 @@ const addAddres = async () => {
         toast.error('Failed to add address')
 
     } finally {
+        v$.value.$reset()
         isLoading.value = !isLoading.value
         getAddress()
     }
 }
+
+const { activeAddress } = storeToRefs(profileStore)
 
 const addresses = ref([])
 
@@ -176,23 +187,35 @@ const getAddress = async () => {
 
     } catch (error) {
         console.log(error);
-        toast.error(error)
+        if (error.status == 403) {
+            return toast.error(error.response.data.message)
+        }
+        toast.error(error.message)
     } finally {
         isLoading.value = !isLoading.value
     }
 }
 
-const deleteAddress = async (id)=>{
+const deleteAddress = async (id) => {
     try {
-        await profileStore.deleteAddress(id)
+        const response = await profileStore.deleteAddress(id)
+        if (response) {
+            if (activeAddress.value?.id && (activeAddress.value?.id == id)) {
+                activeAddress.value = null
+            }
+        }
         toast.success('address has successfully delete')
     } catch (error) {
         console.log(error);
         toast.error(error)
-        
-    }finally{
+
+    } finally {
         await getAddress()
     }
+}
+
+const setActive = (address) => {
+    activeAddress.value = address
 }
 
 
