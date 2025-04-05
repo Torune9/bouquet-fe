@@ -95,6 +95,11 @@ const login = async () => {
         })
 
     } catch (error) {
+        if (error.status == 404) {
+            toast.error('user not found')
+        }else{
+            toast.error(error)
+        }
         return error
     }
 }
