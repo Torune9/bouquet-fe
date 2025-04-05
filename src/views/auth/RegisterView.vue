@@ -91,22 +91,28 @@ const register = async () => {
         const isFormCorrect = await v$.value.$validate()
         if (!isFormCorrect) return
 
-        payload.email = ''
-        payload.username = ''
-        payload.password = ''
 
         const response = await authStore.register(payload)
 
+
+        if (response) {
+            payload.email = ''
+            payload.username = ''
+            payload.password = ''
+        }
+
         return router.replace({
-                path: '/sign-n',
-                state: {
-                    isSuccess: true
-                }
-            })
+            path: '/sign-in',
+            state: {
+                isSuccess: true
+            }
+        })
     } catch (error) {
         if (error.status == 409) {
             toast.warning('email already exist')
         } else {
+            console.log(error);
+
             toast.error(error)
         }
     }
