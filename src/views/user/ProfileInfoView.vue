@@ -45,11 +45,12 @@
                     </span>&nbsp;{{ phoneNumber ? phoneNumber : '-' }}
                 </p>
             </div>
-            <ul class="text-xs font-light">
-                <li>
-                    Adress Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, cum?
-                </li>
-            </ul>
+            <p class="text-xs font-light capitalize" v-if="activeAddress">
+                {{ typeof activeAddress }}
+                {{ `${activeAddress.street},${activeAddress.regency},${activeAddress.district},${activeAddress.city},${activeAddress.province}` }}
+                <br>
+                {{ activeAddress.postalCode }}
+            </p>
         </div>
     </div>
     <!-- data profile -->
@@ -69,10 +70,16 @@
                 <div class="w-full">
                     <label for="fname">First Name</label>
                     <input type="text" class="input w-full" id="fname" name="fname" v-model="payload.firstName">
+                    <small v-if="v$.firstName.$error" v-for="error in v$.firstName.$errors" class="text-red-600">
+                        {{ error.$message }}
+                    </small>
                 </div>
                 <div class="w-full">
                     <label for="lname">Last Name</label>
                     <input type="text" class="input w-full" id="lname" name="lname" v-model="payload.lastName">
+                    <small v-if="v$.lastName.$error" v-for="error in v$.lastName.$errors" class="text-red-600">
+                        {{ error.$message }}
+                    </small>
                 </div>
             </div>
             <div class="w-full">
@@ -90,17 +97,20 @@
 
 <script setup>
 import { useProfileStore } from '@/stores/profileStore';
-import { onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
 import { toast } from 'vue3-toastify';
 import { storeToRefs } from 'pinia';
-
+import useVuelidate from '@vuelidate/core';
+import { required } from '@vuelidate/validators';
 
 const authStore = useAuthStore()
 
 const { currentUser } = storeToRefs(authStore)
 const profileStore = useProfileStore()
 const { phoneNumber } = storeToRefs(profileStore)
+
+const {activeAddress} = storeToRefs(profileStore)
 
 const srcImg = ref('')
 const MAX_SIZE = 5 * 1024 * 1024;
@@ -122,7 +132,6 @@ const uploadProfile = (event) => {
         }
         fr.readAsDataURL(file)
     }
-    console.log(file);
 }
 
 const removeFile = () => {
@@ -141,7 +150,12 @@ const payload = reactive({
     phoneNumber: '',
     file: ''
 })
+const rules = computed(()=>({
+    firstName : {required},
+    lastName : {required},
+}))
 
+const v$ = useVuelidate(rules,payload)
 
 const phoneNumberValidate = () => {
     let regex = /^[0-9]{10,13}$/;
@@ -176,6 +190,8 @@ const getProfile = async () => {
 }
 
 const updateOrCreate = async () => {
+    v$.value.$touch()
+    if (v$.value.$error) return 
     isLoading.value = !isLoading.value
     try {
         const formData = new FormData()
