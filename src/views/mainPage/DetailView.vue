@@ -3,6 +3,9 @@
     <ModalImage :isOpen="isOpen" :src="srcImageModal" @close="closeModal" />
     <MainLayout>
         <template #content>
+            <ModalOrder :is-order-modal="isOpenOrderModal" :bouquet="orderBouquetDetail" @close="closeModalorder"
+                @confirmOrder="confirmOrder" v-model:firstName="payload.firstName" v-model:lastName="payload.lastName"
+                v-model:address="payload.addressId" v-model:phoneNumber="payload.phone" />
             <!-- navigation -->
             <div class="breadcrumbs text-sm p-2">
                 <ul>
@@ -71,7 +74,7 @@
                     </div>
                     <!-- order btn -->
                     <div class="flex flex-row  justify-between gap-x-2 lg:justify-evenly">
-                        <button class="btn btn-lg w-1/2 btn-success sm:w-52">
+                        <button class="btn btn-lg w-1/2 btn-success sm:w-52" @click="createOrder">
                             Order
                         </button>
                         <button class="btn btn-lg btn-warning w-40 sm:w-52" onclick="my_modal.showModal()">
@@ -94,16 +97,20 @@ import MainLayout from '@/layouts/MainLayout.vue';
 
 import { toast } from 'vue3-toastify';
 import { useOrderStore } from '@/stores/orderStore';
-import { ref, computed, onMounted, watch, onUpdated } from 'vue';
+import { ref, computed, onMounted, watch, onUpdated, reactive } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useBouquetStore } from '@/stores/bouquetStore';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import ModalImage from '@/components/modal/ModalImage.vue';
 import { formatToIdr } from '@/services/formatter';
+import { useAuthStore } from '@/stores/authStore';
+import ModalOrder from '@/components/modal/ModalOrder.vue';
+import { openSnap } from '@/services/snap';
 
 const bouquetStore = useBouquetStore()
 
 const isExpanded = ref(false);
+const isOpenOrderModal = ref(false)
 
 const toggleExpand = () => {
     isExpanded.value = !isExpanded.value;
@@ -123,13 +130,14 @@ const heroImage = computed(() => {
 const imgUrlDefault = 'https://placehold.co/600x400?text=Product+Image'
 
 const products = ref([])
-const productsFilter = computed(()=>{
-    return products.value.filter(val => val.id !== router.params.id)
+const productsFilter = computed(() => {
+    return products.value.filter(val => val.id !== route.params.id)
 })
 
 const orderStore = useOrderStore();
 const { cart } = storeToRefs(orderStore);
-const router = useRoute()
+const route = useRoute()
+const router = useRouter()
 
 const isOpen = ref(false)
 const srcImageModal = ref('')
@@ -142,6 +150,8 @@ const setImage = (event) => {
 const closeModal = (data) => {
     return isOpen.value = data
 }
+
+const closeModalorder = (data) => isOpenOrderModal.value = data
 
 const hasAddedToCart = (isAdded) => {
 
@@ -162,7 +172,7 @@ const hasAddedToCart = (isAdded) => {
 
 const getDetailBouquet = async () => {
     try {
-        const response = await bouquetStore.getDetailBouquet(router.params.id)
+        const response = await bouquetStore.getDetailBouquet(route.params.id)
         Object.assign(product.value, response.data)
     } catch (error) {
         console.log(error);
@@ -178,6 +188,56 @@ const getBouquet = async (id) => {
         console.log(error);
     }
 }
+const userStore = useAuthStore()
+const { currentUser } = storeToRefs(userStore)
+const payload = reactive({
+    userId: currentUser.value?.id,
+    email: currentUser.value?.email,
+    addressId: '',
+    phone: '',
+    firstName: '',
+    lastName: '',
+    items: computed(() => [{
+        id: product.value.id,
+        quantity: quantity.value,
+        price: product.value.price,
+        name: product.value.name
+    }]),
+    totalPrice: computed(() => quantity.value * (product.value.price || 0))
+
+})
+const orderBouquetDetail = ref({})
+
+const createOrder = () => {
+    if (!currentUser.value?.token) {
+        return toast.info('please login first')
+    }
+
+    isOpenOrderModal.value = !isOpenOrderModal.value
+
+    if (isOpenOrderModal) {
+        orderBouquetDetail.value = {
+            ...Object.assign(product.value, {
+                heroImage: heroImage.value
+            }),
+            quantity: quantity.value
+        }
+    } else {
+        orderBouquetDetail.value = ''
+    }
+}
+
+const confirmOrder = async () => {
+    try {
+        const response = await orderStore.createOrder(payload)
+        openSnap(response.data.snapToken,router)
+    } catch (error) {
+        console.log(error);
+
+    } finally {
+        closeModalorder(false)
+    }
+}
 
 watch(product, (newVal, oldVal) => {
     if (newVal) {
@@ -187,13 +247,13 @@ watch(product, (newVal, oldVal) => {
     deep: true
 })
 
-watch(router, () => {
-    getBouquet(router.params.id) 
-},{
-    deep :true
+watch(route, () => {
+    getBouquet(route.params.id)
+}, {
+    deep: true
 })
 
-onUpdated(()=>getDetailBouquet())
+onUpdated(() => getDetailBouquet())
 
 onMounted(() => getDetailBouquet())
 
