@@ -2,7 +2,7 @@
     <section>
         <div class="w-full h-screen flex flex-col lg:flex-row font-archivo">
             <div class="w-full h-44 lg:w-1/2 lg:h-full">
-                <img :src="img" alt="image-login" class="w-full h-full object-cover" loading="lazy">
+                <img :src="img" alt="image-login" class="w-full h-full object-cover">
             </div>
             <div class="p-8 flex items-center flex-col gap-y-2 lg:w-1/2 justify-center h-full">
                 <h1 class="text-4xl text-start md:w-lg sm:w-sm w-full">Sign in</h1>

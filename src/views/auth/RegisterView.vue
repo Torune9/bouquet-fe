@@ -46,7 +46,7 @@
                 </form>
             </div>
             <div class="w-full h-60 lg:w-1/2 lg:h-full">
-                <img :src="img" alt="image-login" class="w-full h-full object-cover" loading="lazy">
+                <img :src="img" alt="image-login" class="w-full h-full object-cover">
             </div>
         </div>
     </section>
